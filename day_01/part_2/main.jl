@@ -2,27 +2,19 @@
 function main()
     input_file = joinpath(@__DIR__, "input.txt")
     left, right = Int[], Int[]
-    frequency_map = Dict{Int,Int}()
+    freq = Dict{Int,Int}()
     open(input_file) do f
         for line in eachline(f)
             row = split(line)
-            left_num = parse(Int, row[1])
-            right_num = parse(Int, row[2])
-            push!(left, left_num)
-            push!(right, right_num)
-            if haskey(frequency_map, right_num)
-                frequency_map[right_num] += 1
-            else
-                frequency_map[right_num] = 1
-            end
+            push!(left, parse(Int, row[1]))
+            push!(right, parse(Int, row[2]))
+            freq[right[end]] = get(freq, right[end], 0) + 1
         end
     end
 
     sum = 0::Int
     for l in left
-        if haskey(frequency_map, l)
-            sum += frequency_map[l] * l
-        end
+        sum += get(freq, l, 0) * l
     end
     print("Part 2: ", sum, "\n")
 end
