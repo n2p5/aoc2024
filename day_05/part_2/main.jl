@@ -28,8 +28,8 @@ function getupdates(filepath::String)::Vector{Vector{Int}}
     return updates
 end
 
-# use to return middle number update[Int((length(update) + 1) / 2)]
-
+# iscorrect checks loops through each page in the update and checks if the current page has a rule that
+# forbids the previous pages. If it does, it returns false, otherwise it returns true.
 function iscorrect(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Bool
     for (i, page) in enumerate(update)
         if haskey(rules, page)
@@ -42,6 +42,9 @@ function iscorrect(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Bool
     return true
 end
 
+# correctupdate recursively swaps pages until the update is correct. It does this by checking if the current page
+# has a rule that forbids the previous pages. If it does, it swaps the current page with the first previous page that
+# is forbidden by the current page. It then runs recursively until the update is correct.
 function correctupdate(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Vector{Int}
     for (i, page) in enumerate(update)
         if i == 1 # skip first page
