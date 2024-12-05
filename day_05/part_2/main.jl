@@ -1,7 +1,7 @@
 
 
 
-function getrules(filepath)::Dict{Int,Set{Int}}
+function getrules(filepath::String)::Dict{Int,Set{Int}}
     rules = Dict{Int,Set{Int}}()
     open(filepath) do file
         for line in eachline(file)
@@ -18,7 +18,7 @@ function getrules(filepath)::Dict{Int,Set{Int}}
     return rules
 end
 
-function getupdates(filepath)::Vector{Vector{Int}}
+function getupdates(filepath::String)::Vector{Vector{Int}}
     updates = Vector{Vector{Int}}()
     open(filepath) do file
         for line in eachline(file)
@@ -66,17 +66,12 @@ function main()
     updates = getupdates(joinpath(@__DIR__, "update.txt"))
 
     sum = 0::Int
-    incorrect_updates = Vector{Vector{Int}}()
 
     for update in updates
         if !iscorrect(rules, update)
-            push!(incorrect_updates, update)
+            corrected = correctupdate(rules, update)
+            sum += corrected[Int((length(corrected) + 1) / 2)]
         end
-    end
-
-    for update in incorrect_updates
-        corrected = correctupdate(rules, update)
-        sum += corrected[Int((length(corrected) + 1) / 2)]
     end
 
     println("sum: ", sum)
