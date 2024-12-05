@@ -50,6 +50,7 @@ function correctupdate(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Vector{I
         if haskey(rules, page)
             for (j, prev_page) in enumerate(update[1:i-1])
                 if prev_page in rules[page]
+                    # swap pages and run recursively until correct
                     update[i], update[j] = update[j], update[i]
                     return correctupdate(rules, update)
                 end
