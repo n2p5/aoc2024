@@ -42,12 +42,29 @@ function iscorrect(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Bool
     return true
 end
 
+function correctupdate(rules::Dict{Int,Set{Int}}, update::Vector{Int})::Vector{Int}
+    for (i, page) in enumerate(update)
+        if i == 1 # skip first page
+            continue
+        end
+        if haskey(rules, page)
+            for (j, prev_page) in enumerate(update[1:i-1])
+                if prev_page in rules[page]
+                    update[i], update[j] = update[j], update[i]
+                    return correctupdate(rules, update)
+                end
+            end
+        end
+    end
+    return update
+end
+
+
 function main()
     rules = getrules(joinpath(@__DIR__, "rules.txt"))
     updates = getupdates(joinpath(@__DIR__, "update.txt"))
 
     sum = 0::Int
-
     incorrect_updates = Vector{Vector{Int}}()
 
     for update in updates
@@ -57,11 +74,11 @@ function main()
     end
 
     for update in incorrect_updates
-        println(update)
+        corrected = correctupdate(rules, update)
+        sum += corrected[Int((length(corrected) + 1) / 2)]
     end
 
-    println(length(incorrect_updates))
-    println(sum)
+    println("sum: ", sum)
 end
 
 main()
