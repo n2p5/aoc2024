@@ -45,7 +45,6 @@ function main()
     for antenna in unique_antennas
         locations = findall(x -> x == antenna, antenna_grid)
         mark_antinodes!(antinode_grid, locations)
-
     end
 
     antinode_locations = findall(x -> x == 'X', antinode_grid)
