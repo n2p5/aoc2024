@@ -25,7 +25,7 @@ function checksum(disk::Vector{Int})::Int
     sum = 0
     for (i, v) in enumerate(disk)
         if v == -1
-            return sum
+            break
         end
         sum += v * (i - 1)
     end
@@ -61,7 +61,6 @@ function main()
     disk = diskmap(data)
     compressed = compact_disk(disk)
     println("checksum: ", checksum(compressed))
-
 end
 
 main()
