@@ -25,12 +25,13 @@ function checksum(disk::Vector{Int})::Int
     sum = 0
     for (i, v) in enumerate(disk)
         if v == -1
-            break
+            continue
         end
         sum += v * (i - 1)
     end
     return sum
 end
+
 
 function compact_disk(disk::Vector{Int})::Vector{Int}
     result = copy(disk)
@@ -42,33 +43,39 @@ function compact_disk(disk::Vector{Int})::Vector{Int}
         end
         v = result[i]
         if v == -1
+            move_buffer = Vector{Int}()
             continue
         end
-        push!(move_buffer, v)
+        if length(move_buffer) == 0 || v == move_buffer[1]
+            push!(move_buffer, v)
+        end
         if result[i-1] == v
             continue
         end
-
-        # TODO: this is a mess, needs to be refactored
-        for (j, d) in enumerate(result[1:i])
-            offset = j + length(move_buffer)
-            if sum(result[j:offset]) == length(move_buffer) * -1
-                for k in j:length(move_buffer)
-                    result[k] = move_buffer[1]
+        if result[i-1] != v
+            for (j, d) in enumerate(result[1:i])
+                offset = j + length(move_buffer) - 1
+                if all(x -> x == -1, result[j:offset])
+                    for k in j:offset
+                        result[k] = move_buffer[1]
+                    end
+                    for k in i:i+length(move_buffer)-1
+                        result[k] = -1
+                    end
+                    move_buffer = Vector{Int}()
+                    break
                 end
-                for k in i:i+length(move_buffer)-1
-                    result[k] = -1
-                end
-                move_buffer = Vector{Int}()
-                break
             end
+            move_buffer = Vector{Int}()
         end
+
+        # # TODO: this is a mess, needs to be refactored
     end
     return result
 end
 
 function main()
-    filename = "simple.txt"
+    filename = "input.txt"
     input = readlines(joinpath(@__DIR__, filename))[1]
     data = parse.(Int, collect(input))
 
