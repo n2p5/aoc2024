@@ -18,7 +18,7 @@ function main()
     filepath = joinpath(@__DIR__, "input.txt")
     stones = parse.(Int, split(readlines(filepath)[1]))
 
-    blink_count = 25
+    blink_count = 75
 
     println("Stones: ", stones)
 
